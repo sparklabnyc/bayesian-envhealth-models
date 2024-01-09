@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Intended Audience :: Science/Research",
 ]
-dependencies = ["numpyro", "arviz"]
+dependencies = ["hydra-core", "numpyro", "jaxtyping", "beartype", "arviz"]
 
 [project.optional-dependencies]
 dev = ["ruff", "pre-commit"]
@@ -36,3 +36,4 @@ path = "src/bayesian_envhealth_models/__init__.py"
 [tool.ruff]
 extend-include = ["*.ipynb"]
 exclude = []
+ignore = ["F821"]

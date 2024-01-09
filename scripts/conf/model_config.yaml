@@ -1,0 +1,18 @@
+dir:
+  data: "data/"
+  output: "output/"
+
+run:
+  device: "cpu" # "cpu" or "gpu"
+  save: True
+
+model:
+  name: "model_intercept"
+  sampler_config:
+    draws: 500
+    warmup: 500
+    thin: 1
+    chains: 2
+    chain_method: "sequential" # "sequential", "parallel" or "vectorized"
+    seed: 1
+    progressbar: True
