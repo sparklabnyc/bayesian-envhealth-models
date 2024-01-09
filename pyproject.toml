@@ -32,3 +32,7 @@ Source = "https://github.com/unknown/bayesian-envhealth-models"
 
 [tool.hatch.version]
 path = "src/bayesian_envhealth_models/__init__.py"
+
+[tool.ruff]
+extend-include = ["*.ipynb"]
+exclude = []
