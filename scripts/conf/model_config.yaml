@@ -1,5 +1,5 @@
 dir:
-  data: "data/"
+  data: "data/processed/"
   output: "output/"
 
 run:
@@ -9,7 +9,7 @@ run:
 model:
   name: "model_intercept"
   sampler_config:
-    draws: 500
+    samples: 500
     warmup: 500
     thin: 1
     chains: 2
