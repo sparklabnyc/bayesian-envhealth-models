@@ -4,10 +4,10 @@ dir:
 
 run:
   device: "cpu" # "cpu" or "gpu"
-  save: True
+  save: False
 
 model:
-  name: "model_intercept"
+  name: "model_age_time_interaction"
   sampler_config:
     samples: 500
     warmup: 500

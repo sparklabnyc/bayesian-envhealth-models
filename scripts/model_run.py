@@ -38,7 +38,7 @@ def var_factory(model_name: str) -> list[str]:
     if model_name == "model_intercept":
         return ["deaths", "population"]
     if model_name == "model_age_time_interaction":
-        return ["year_id", "age_id", "deaths", "population"]
+        return ["age_id", "time_id", "deaths", "population"]
     else:
         raise ValueError("Invalid model name")
 
@@ -49,6 +49,17 @@ def load_data(data_path: str, vars: list[str]) -> dict[str, jnp.ndarray]:
     data_list = [jnp.load("{}{}.npy".format(data_path, var)) for var in vars]
     data = dict(zip(vars, data_list))
     return data
+
+
+@beartype
+def print_model_shape(
+    model: Callable,
+    data: dict[str, jnp.ndarray],
+) -> None:
+    """Helper function to get model shapes."""
+    with numpyro.handlers.seed(rng_seed=1):
+        trace = numpyro.handlers.trace(model).get_trace(**data)
+    print(numpyro.util.format_shapes(trace))
 
 
 @beartype
@@ -92,6 +103,11 @@ def main(cfg: DictConfig) -> None:
     data = load_data(
         data_path=cfg.dir.data,
         vars=vars,
+    )
+
+    print_model_shape(
+        model=model,
+        data=data,
     )
 
     log.info("Starting inference...")
