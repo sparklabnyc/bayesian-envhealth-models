@@ -11,7 +11,11 @@ from omegaconf import DictConfig
 from beartype.typing import Callable
 from beartype import beartype
 
-from bayesian_envhealth_models.models import model_intercept, model_age_time_interaction
+from bayesian_envhealth_models.models import (
+    model_intercept,
+    model_age_time_interaction,
+    model_age_space_time_race,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,6 +33,8 @@ def model_factory(model_name: str) -> Callable:
         return model_intercept
     if model_name == "model_age_time_interaction":
         return model_age_time_interaction
+    if model_name == "model_age_space_time_race":
+        return model_age_space_time_race
     else:
         raise ValueError("Invalid model name")
 
@@ -39,6 +45,18 @@ def var_factory(model_name: str) -> list[str]:
         return ["deaths", "population"]
     if model_name == "model_age_time_interaction":
         return ["age_id", "time_id", "deaths", "population"]
+    if model_name == "model_age_space_time_race":
+        # s1 is state, space is county, lookup is from state to county, time is year
+        return [
+            "age_id",
+            "s1_id",
+            "space_id",
+            "time_id",
+            "race_id",
+            "lookup",
+            "deaths",
+            "population",
+        ]
     else:
         raise ValueError("Invalid model name")
 
