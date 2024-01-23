@@ -36,4 +36,4 @@ path = "src/bayesian_envhealth_models/__init__.py"
 [tool.ruff]
 extend-include = ["*.ipynb"]
 exclude = []
-ignore = ["F821"]
+ignore = ["F722", "F821"]

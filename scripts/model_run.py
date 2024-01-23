@@ -15,6 +15,7 @@ from bayesian_envhealth_models.models import (
     model_intercept,
     model_age_time_interaction,
     model_age_space_time_race,
+    model_space_gaussian,
 )
 
 logging.basicConfig(
@@ -35,6 +36,8 @@ def model_factory(model_name: str) -> Callable:
         return model_age_time_interaction
     if model_name == "model_age_space_time_race":
         return model_age_space_time_race
+    if model_name == "model_space_gaussian":
+        return model_space_gaussian
     else:
         raise ValueError("Invalid model name")
 
@@ -57,6 +60,8 @@ def var_factory(model_name: str) -> list[str]:
             "deaths",
             "population",
         ]
+    if model_name == "model_space_gaussian":
+        return ["space_id", "adj", "outcome"]
     else:
         raise ValueError("Invalid model name")
 

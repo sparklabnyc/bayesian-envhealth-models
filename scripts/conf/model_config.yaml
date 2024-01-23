@@ -7,7 +7,7 @@ run:
   save: False
 
 model:
-  name: "model_age_space_time_race"
+  name: "model_space_gaussian"
   sampler_config:
     samples: 500
     warmup: 500

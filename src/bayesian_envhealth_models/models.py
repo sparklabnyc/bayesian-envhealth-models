@@ -2,7 +2,7 @@ import numpy as np
 import numpyro
 import numpyro.distributions as dist
 from numpyro.infer.reparam import LocScaleReparam
-from jaxtyping import Array, jaxtyped, Int
+from jaxtyping import Array, jaxtyped, Int, Float
 import jax.numpy as jnp
 from typing import Optional
 from beartype import beartype
@@ -188,3 +188,49 @@ def model_age_space_time_race(
             dist.Binomial(total_count=population, logits=mu_logit),
             obs=deaths,
         )
+
+
+@jaxtyped(typechecker=beartype)
+def model_space_gaussian(
+    space_id: Int[Array, "data"],
+    adj: Int[Array, "space space"],
+    outcome: Optional[Float[Array, "data"]] = None,
+) -> None:
+    """
+    Model with:
+    - intercept
+    - ICAR spatial effect
+    - Gaussian likelihood
+    Used for smoothing wbgtmax over space.
+    """
+    # adj has to be a numpy array or a scipy sparse matrix for numpyro CAR
+    adj = np.array(adj)
+
+    N = len(outcome)
+
+    # hyperparameters
+    intercept = numpyro.sample("intercept", dist.Normal(loc=0.0, scale=10.0))
+    sigma = numpyro.sample("sigma", dist.HalfNormal(5.0))
+    spatial_scale = numpyro.sample("spatial_scale", dist.HalfNormal(1.0))
+
+    # space
+    space_effect_raw = numpyro.sample(
+        "space_effect_raw",
+        dist.CAR(
+            loc=0.0,
+            # effectively ICAR – there are mathematical reasons it cannot be 1.0
+            correlation=0.99,
+            conditional_precision=1.0,
+            # `adj` is a matrix of 1s and 0s specifying the neighbourhood adjacency
+            adj_matrix=adj,
+            is_sparse=True,
+        ),
+    )
+    space_effect = spatial_scale * space_effect_raw
+
+    mean = intercept + space_effect
+
+    # likelihood
+    with numpyro.plate("N", size=N):
+        mu = mean[space_id]
+        numpyro.sample("outcome", dist.Normal(loc=mu, scale=sigma), obs=outcome)
